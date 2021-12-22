@@ -1,0 +1,25 @@
+name: Prüfungsplan Updates
+on:
+  schedule:
+    - cron: '5,35 * * 1-2,5-7,12 *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache checksums
+        uses: actions/cache@v2
+        with:
+          path: .cksum.txt
+          key: cksum
+      - name: Run bot
+        env:
+          WEBHOOK_URL: ${{secrets.WEBHOOK_URL}}
+        run: bash pruefungsplan_updates.bash
+      - name: Archive Prüfungsplan
+        uses: actions/upload-artifact@v2
+        with:
+          name: Prüfungsplan
+          path: Prüfungsplan_INF.pdf
